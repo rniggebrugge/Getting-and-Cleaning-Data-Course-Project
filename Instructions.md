@@ -1,11 +1,6 @@
----
-title: "Getting and cleaning data - Course Project"
-author: "Remco Niggebrugge"
-date: "01/14/2015"
-output: 
-        html_document:
-                keep_md: true
----
+# Getting and cleaning data - Course Project
+Remco Niggebrugge  
+01/14/2015  
  
  
 #Nochtans: activities do not have meaningful names!!!  
@@ -16,20 +11,39 @@ These are the steps I am going to take.
 
 **0** Libraries
 
-```{r libraries}
+
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following object is masked from 'package:stats':
+## 
+##     filter
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(lattice)
 ```
 
 **1** Set working directory to that with all raw data files:
 
-```{r setwd}
+
+```r
 setwd("/home/remco/Desktop/data/small/")
 ```
 
 **2** Read training files:
 
-```{r read-train-set}
+
+```r
 subject      <- read.table("./train/subject_train.txt")
 activity     <- read.table("./train/y_train.txt")
 measurements <- read.table("./train/X_train.txt", sep="")
@@ -38,7 +52,8 @@ features     <- read.table("./features.txt")
 
 **3** Assign column names:
 
-```{r assign-column-names}
+
+```r
 names(subject)      <- "subject"
 names(activity)     <- "activity"
 names(measurements) <- features[,2]    ## use 2nd column of features, first column has index
@@ -46,13 +61,15 @@ names(measurements) <- features[,2]    ## use 2nd column of features, first colu
 
 **4** Now simply bind the columns (pasting data.frames left-to-right)
 
-```{r binding-training}
+
+```r
 train_frame <- cbind(subject, activity, measurements)
 ```
 
 **5** Now repeat same steps for the test dataset:
 
-```{r read-test-set}
+
+```r
 subject      <- read.table("./test/subject_test.txt")
 activity     <- read.table("./test/y_test.txt")
 measurements <- read.table("./test/X_test.txt", sep="")
@@ -65,13 +82,15 @@ test_frame <- cbind(subject, activity, measurements)
 
 **6** Now lets put the two sets together, using *rbind* to paste top-to-bottom:
 
-```{r merging-sets}
+
+```r
 data <- rbind(train_frame, test_frame)
 ```
 
 **7** The column names actually contain many characters we do not want there. Let's clean:
 
-```{r clean-up-names}
+
+```r
 names       <- names(data)
 names       <- gsub("[)(,\\-]","", names)
 names(data) <- names 
@@ -79,7 +98,8 @@ names(data) <- names
 
 Also add meaning full labels to activitiy values:
 
-```{r label-activities}
+
+```r
 activity_labels    <-read.table("./activity_labels.txt")
 activity_labels$V2 <-tolower(activity_labels$V2)
 data$activity      <- factor(data$activity, labels=activity_labels[,2])
@@ -89,7 +109,8 @@ data$activity      <- factor(data$activity, labels=activity_labels[,2])
 
 Let us start by creating a list of all features with name containing *'mean'*, *'Mean'* or *'std'*:
 
-```{r select-columns}
+
+```r
 columns <- grep("[[Mm]ean|std]", features[,2]) 
 columns <- columns +2       # accounting for the added activity and subject columns
 columns <- c(1,2,columns)   # that subsequently need to be added!!
@@ -97,37 +118,56 @@ columns <- c(1,2,columns)   # that subsequently need to be added!!
 
 Now we are ready to strip our dataset, only keeping those values we are interested in:
 
-```{r strip-data-set}
+
+```r
 data <- data[,columns]
 ```
 
 Dimensions should be 10299 by 55, check:
-```{r check-size}
+
+```r
 dd <- dim(data)
 dd
 ```
 
-So: 10299==`r dd[1]`   
-And:   55==`r dd[2]`  
+```
+## [1] 10299    55
+```
+
+So: 10299==10299   
+And:   55==55  
 
 
 **9** Group!
 
-```{r}
+
+```r
 new_data_set <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 ```
 
 And examine:
 
 
-```{r}
 
+```r
 with(new_data_set, xyplot(tBodyAccmeanX ~  activity | subject ))
-with(new_data_set, xyplot(tBodyAccmeanX ~  subject | activity ))
+```
 
+![](Instructions_files/figure-html/unnamed-chunk-2-1.png) 
+
+```r
+with(new_data_set, xyplot(tBodyAccmeanX ~  subject | activity ))
+```
+
+![](Instructions_files/figure-html/unnamed-chunk-2-2.png) 
+
+```r
 #str(new_data_set)
 #summary(new_data_set)
 #new_data_set
 
 g <- group_by(new_data_set, subject) %>% summarise_each(funs(mean))
 with(g, xyplot(tBodyAccmeanX ~ subject))
+```
+
+![](Instructions_files/figure-html/unnamed-chunk-2-3.png) 
