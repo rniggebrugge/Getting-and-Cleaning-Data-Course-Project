@@ -1,0 +1,112 @@
+---
+title: "Getting and cleaning data - Course Project"
+author: "Remco Niggebrugge"
+date: "01/14/2015"
+output: html_document
+---
+ 
+ 
+**This document is for me to keep track**, I do not think a RMarkdown file should be posted as part of this assignment.
+
+These are the steps I am going to take.
+
+**0** Libraries
+
+```{r libraries}
+library(dplyr)
+```
+
+**1** Set working directory to that with all raw data files:
+
+```{r setwd}
+setwd("/home/remco/Desktop/data/small/")
+```
+
+**2** Read training files:
+
+```{r read-train-set}
+subject      <- read.table("./train/subject_train.txt")
+activity     <- read.table("./train/y_train.txt")
+measurements <- read.table("./train/X_train.txt", sep="")
+features     <- read.table("./features.txt")
+```
+
+**3** Assign column names:
+
+```{r assign-column-names}
+names(subject)      <- "subject"
+names(activity)     <- "activity"
+names(measurements) <- features[,2]    ## use 2nd column of features, first column has index
+```
+
+**4** Now simply bind the columns (pasting data.frames left-to-right)
+
+```{r binding-training}
+train_frame <- cbind(subject, activity, measurements)
+```
+
+**5** Now repeat same steps for the test dataset:
+
+```{r read-test-set}
+subject      <- read.table("./test/subject_test.txt")
+activity     <- read.table("./test/y_test.txt")
+measurements <- read.table("./test/X_test.txt", sep="")
+names(subject)      <- "subject"
+names(activity)     <- "activity"
+names(measurements) <- features[,2]    ## use 2nd column of features, first column has index
+
+test_frame <- cbind(subject, activity, measurements)
+```
+
+**6** Now lets put the two sets together, using *rbind* to paste top-to-bottom:
+
+```{r merging-sets}
+data <- rbind(train_frame, test_frame)
+```
+
+**7** The column names actually contain many characters we do not want there. Let's clean:
+
+```{r clean-up-names}
+names       <- names(data)
+names       <- gsub("[)(,\\-]","", names)
+names(data) <- names 
+```
+
+**8** Now find the columns we want to keep:
+
+Let us start by creating a list of all features with name containing *'mean'*, *'Mean'* or *'std'*:
+
+```{r select-columns}
+columns <- grep("[[Mm]ean|std]", features[,2]) 
+columns <- columns +2       # accounting for the added activity and subject columns
+columns <- c(1,2,columns)   # that subsequently need to be added!!
+```
+
+Now we are ready to strip our dataset, only keeping those values we are interested in:
+
+```{r strip-data-set}
+data <- data[,columns]
+```
+
+Dimensions should be 10299 by 53, check:
+```{r check-size}
+dd <- dim(data)
+dd
+```
+
+So: 10299==`r dd[1]`   
+And:   53==`r dd[2]`  
+
+
+**9** Group!
+
+```{r}
+new_data_set <- group_by(data, activity, subject) %>% summarise_each(funs(mean))
+```
+
+And examine:
+
+```{r}
+str(new_data_set)
+summary(new_data_set)
+head(new_data_set)
