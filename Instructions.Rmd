@@ -6,7 +6,7 @@ output: html_document
 ---
  
  
-#Nochthans: activities do not have meaningful names!!!  
+#Nochtans: activities do not have meaningful names!!!  
  
 **This document is for me to keep track**, I do not think a RMarkdown file should be posted as part of this assignment.
 
