@@ -8,7 +8,7 @@ library(lattice)        # for plotting, not needed but good to have
 # files. Change this if the script is located in different folder.
 
 setwd("/home/remco/Desktop/data/Getting-and-Cleaning-Data-Course-Project/")
-
+ 
 # Reading the tables to be merged.
 # - subject      : list with numbers of subjects for each observation
 # - activity     : list of activities performed for each observation
