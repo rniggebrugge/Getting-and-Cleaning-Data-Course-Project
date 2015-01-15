@@ -3,11 +3,6 @@
 library(dplyr)    # for grouping and summarizing data.frames
 library(tidyr)    # for "gather" function
 
-# Set working directory, it should point to folder with the raw data
-# files. Change this if the script is located in different folder.
-
-#setwd("/home/remco/Desktop/data/Getting-and-Cleaning-Data-Course-Project/")
- 
 # Reading the tables to be merged.
 # - subject      : list with numbers of subjects for each observation
 # - activity     : list of activities performed for each observation
