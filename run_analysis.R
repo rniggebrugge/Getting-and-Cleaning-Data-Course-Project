@@ -85,6 +85,8 @@ columns <- c(1,2,columns)
 # With that we can reduce are "data" data.frame, only keeping 
 # the columns as described above.
 
+cat("\n New tidy data.frame available: ***data***. Dimensions 10299 x 55\n")
+
 data <- data[,columns]
 
 # As a final step we will further reduce the data.frame by grouping
@@ -106,6 +108,18 @@ new_data_set_wide     <- group_by(data, subject, activity) %>% summarise_each(fu
 cat("New tidy data.fram available: ***new_data_set_narrow***. Dimensions = 9540 x 4\n\n")
 
 new_data_set_narrow  <- gather(new_data_set_wide, feature, measurement, -subject, -activity)
+
+# Now removing objects no longer needed, this to not clutter R with all sort of
+# temporary data.
+
+rm(activity)
+rm(act_labels)
+rm(columns)
+rm(features)
+rm(measurements)
+rm(subject)
+rm(test_frame)
+rm(train_frame)
 
 cat("FINISHED PROCESSING.\n\n\n")
 
