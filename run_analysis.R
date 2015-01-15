@@ -1,13 +1,12 @@
 ## R script file for the Getting and Cleaning Data Course Project
 
 library(dplyr)          # for grouping and summarizing data.frames
-library(lattice)        # for plotting, not needed but good to have
-                        # at hand while testing
+library(tidyr)		    # for "gather" function
 
 # Set working directory, it should point to folder with the raw data
 # files. Change this if the script is located in different folder.
 
-setwd("/home/remco/Desktop/data/Getting-and-Cleaning-Data-Course-Project/")
+#setwd("/home/remco/Desktop/data/Getting-and-Cleaning-Data-Course-Project/")
  
 # Reading the tables to be merged.
 # - subject      : list with numbers of subjects for each observation
@@ -64,7 +63,7 @@ data <- rbind(train_frame, test_frame)
 # in the "activity_labels.txt" file where they are stored in 2nd column.
 
 act_labels     <- read.table("./activity_labels.txt")
-act_labels$V2  <- tolower(labels$V2)
+act_labels$V2  <- tolower(act_labels$V2)
 data$activity  <- factor(data$activity, labels=act_labels[,2])
 
 # Using again the "features" list with all measurements, select those
@@ -92,13 +91,26 @@ data <- data[,columns]
 # The function "summarise_each" is used to summarize over all columns
 # other than those grouped by.
 
-new_data_set <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
+new_data_set_wide     <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 
-# Let's inspect the result a bit:
+# For plotting measurements of multiple features, it is sometimes convenient
+# to transform the wide table into a narrow one. This can be achieved by gathering
+# over the columns with measurements (so excluding subject and activity columns).
 
-with(new_data_set, xyplot(tBodyAccmeanX ~  activity | subject ))
-with(new_data_set, xyplot(tBodyAccmeanX ~  subject | activity ))
+new_data_set_narrow  <- gather(new_data_set_wide, feature, measurement, -subject, -activity)
 
-str(new_data_set)
-summary(new_data_set)
-new_data_set
+# Some suggetions to inspect data visually:
+# library(lattice)
+# library(ggplot2)
+
+# with(new_data_set_wide, xyplot(tBodyAccmeanX ~  activity | subject ))
+# with(new_data_set_wide, xyplot(tBodyAccmeanX ~  subject | activity ))
+# with(new_data_set_narrow, xyplot(measurement ~ subject| activity, groups=feature))
+# qplot(measurement, feature,  data=new_data_set_narrow, facets = subject~activity)
+
+
+# str(new_data_set_wide)
+# summary(new_data_set_wide)
+
+# str(new_data_set_narrow)
+# summary(new_data_set_narrow)
