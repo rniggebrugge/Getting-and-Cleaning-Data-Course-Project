@@ -1,7 +1,7 @@
 ## R script file for the Getting and Cleaning Data Course Project
 
-library(dplyr)          # for grouping and summarizing data.frames
-library(tidyr)		    # for "gather" function
+library(dplyr)    # for grouping and summarizing data.frames
+library(tidyr)    # for "gather" function
 
 # Set working directory, it should point to folder with the raw data
 # files. Change this if the script is located in different folder.
