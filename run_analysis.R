@@ -10,6 +10,8 @@ library(tidyr)    # for "gather" function
 # - features     : list with titles of all measurements, used to create
 #                  meaningful column names
 
+TPE <- FALSE
+
 cat("\n\nReading train dataset.....please wait....\n")
 
 subject      <- read.table("./train/subject_train.txt")
@@ -23,9 +25,12 @@ features     <- read.table("./features.txt")
 # contains many unwanted characters, these will be removed before
 # using the values as column names of the dataset.
 
+
+if(TPE){
 features <- features[,2]   
 features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
 features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angleWithGravity_\\1_mean_mag" , features)
+# features <- gsub("^angle.*","drop_all", features)
 features <- gsub("[)(,]","", features)
 features <- gsub("^t","time_", features)
 features <- gsub("^f","fft_", features)
@@ -33,7 +38,19 @@ features <- gsub("Mag","_mag", features)
 features <- gsub("\\-","_", features)
 features <- gsub("_mag_(mean|meanFreq|std)","_\\1_mag", features)
 features <- gsub("angle([XYZ])gravityMean","angle_gravity_mean_\\1", features)
-
+} else {
+features <- features[,2]
+features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
+features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angle\\1|Gravity_mean_mag" , features)
+features <- gsub("[)(,]","", features)
+features <- gsub("^t","time", features)
+features <- gsub("^f","fft", features)
+features <- gsub("Mag","_mag", features)
+features <- gsub("\\-","_", features)
+features <- gsub("_mag_meanFreq","Frequency_mag_mean", features)
+features <- gsub("_mag_(mean|std)","_\\1_mag", features)
+features <- gsub("angle([XYZ])gravityMean","angle\\1|_Gravity_mean_mag", features)
+}
 # Adding column names to the above data.frames. This will ensure the
 # final table is understandable and ensures a smooth merge with the
 # test-set data 
@@ -82,14 +99,13 @@ data$activity  <- factor(data$activity, labels=act_labels[,2])
 # of columns we need to keep.
 
 columns <- grep("std|[Mm]ean", features) 
-co <- columns
 columns <- columns +2       
 columns <- c(1,2,columns)   
 
 # With that we can reduce are "data" data.frame, only keeping 
 # the columns as described above.
 
-cat("\nNew tidy data.frame available: ***data***. Dimensions 10299 x 55\n")
+cat("\nNew tidy data.frame available: ***data***. \n")
 
 data <- data[,columns]
 
@@ -101,7 +117,9 @@ data <- data[,columns]
 # The function "summarise_each" is used to summarize over all columns
 # other than those grouped by.
 
-nds  <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
+cat("\nCreated wide tidy dataset: ***tidy_data_set_wide***.")
+
+tidy_data_set_wide  <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 
 # For a proper tidy data.set we need a clear distinction between feature and measurement.
 # At the moment the many columns can refer to the observed value, reflecting different
@@ -109,9 +127,15 @@ nds  <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 # data.
 #
 
-tidyData <- gather(nds, temp_column, value, -subject, -activity) %>%
-	    separate(temp_column, into=c("type","feature","value_type","component")) %>%
-	    spread(feature, value)	
+cat("\nCreated narrow tidy dataset: ***tidy_data_set_narrow***.")
+
+split_columns <- c("type","feature","value_type","component") 
+if (TPE) split_columns <-  c("feature","value_type","component") 
+
+tidy_data_set_narrow <- tidy_data_set_wide %>%
+	    		gather(temp_column, value, -subject, -activity) %>%
+	    		separate(temp_column, into=split_columns, sep="_") %>%
+	    		spread(feature, value)	
 
 
 # For plotting measurements of multiple features, it is sometimes convenient
@@ -127,11 +151,9 @@ rm(subject)
 rm(test_frame)
 rm(train_frame)
 
-cat("FINISHED PROCESSING.\n\n\n")
+cat("\n\n\nFINISHED PROCESSING.\n\n\n")
 
-# Some suggetions to inspect data visually:
-# library(lattice)
-# library(ggplot2)
+
 # with(new_data_set_wide, xyplot(tBodyAccmeanX ~  activity | subject ))
 # with(new_data_set_wide, xyplot(tBodyAccmeanX ~  subject | activity ))
 # with(new_data_set_narrow, xyplot(measurement ~ subject| activity, groups=feature))
