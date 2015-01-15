@@ -73,7 +73,7 @@ data$activity  <- factor(data$activity, labels=act_labels[,2])
 # are all increased with 2, and the numbers 1 and 2 are added to list
 # of columns we need to keep.
 
-columns <- grep("[[Mm]ean|std]", features) 
+columns <- grep("std|[Mm]ean", features) 
 columns <- columns +2       
 columns <- c(1,2,columns)   
 
