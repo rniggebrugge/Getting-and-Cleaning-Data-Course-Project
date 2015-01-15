@@ -15,7 +15,7 @@ library(tidyr)    # for "gather" function
 # - features     : list with titles of all measurements, used to create
 #                  meaningful column names
 
-cat("\n\nReading train dataset....please wait....\n")
+cat("\n\nReading train dataset.....please wait....\n")
 
 subject      <- read.table("./train/subject_train.txt")
 activity     <- read.table("./train/y_train.txt")
