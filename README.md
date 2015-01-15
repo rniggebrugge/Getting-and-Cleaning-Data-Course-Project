@@ -8,11 +8,11 @@
  
 #### Prerequisites
 
-`
+```r
 cat("\nNew tidy data.frame available: ***new_data_set_wide***. Dimensions = 180 x 55\n")
 
 new_data_set_wide     <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
-`
+```
 
 For the **analysis.R** script to function properly, the following conditions
 are assumed:
