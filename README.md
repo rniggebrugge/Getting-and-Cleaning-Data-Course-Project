@@ -15,7 +15,7 @@ are assumed:
 * **tidyr** package is installed;
 * the script is saved and called from directory containing the experimental data.
 
-To be clear: the last point means the *analysis.R* file is in same directory as (for example)
+To be clear: the last point means the *run_analysis.R* file is in same directory as (for example)
 the *features_info.txt* and *features.txt* files and */test* and */train* sub-folders.
 
 
@@ -63,9 +63,27 @@ Because **features** is used to name the columns in the dataset, with the **colu
 
 The **data** data.frame is now reduced, only columns 1 and 2 and those matching **mean** and **std** measurements are kept.
 
+From the **dplyr** library the **group_by** is used the make groups for each *subject-activity* combination. This enables us to calculate values (mean, max, min, etc.) for each such group. 
 
+The results of the **group_by** operation is *piped* to the **dplyr::summarise_each** function. With this function we can make calculations for each column of the data.frame (except obviously those used for the grouping). The argument **mean** (function) is used as we need to calculate average values for each subject and each activity. 
 
+The resulting data.frame is stored in **new_data_set_wide**.  
+It contains mean measurements for 180 rows (30 subject * 6 activities = 180 groups), and 55 columns (53 measurements + activity + subject).
 
+As a final processing step this **new_data_set_wide** is transformed to a narrow table, by gathering over all the measurement columns. Using the **gather** function of **tidyr** this is achieved, the *subject* and *activity* columns are excluded from gathering and the mesaured features (column names in **new_data_set_wide**) are listed in column **feature** with the column **measurement** containing the actual values. 
+
+The resulting data.frame is stored in **new_data_set_narrow**.  
+It contains 9540 rows (53 measurements * 180 groups) and 4 columns (subject + activity + feature + measurment).
+
+The creation of **new_data_set_narrow** is not required, but I found it very useful to create plots with multiple lines. Example: *qplot(measurement, feature,  data=new_data_set_narrow, facets = .~activity)*
+
+In the final step of the script we remove the objects no longer needed, using **rm(....)**.
+
+After completion of the code the environment should now contain three new objects:
+
+* data
+* new_data_set_narrow
+* new_data_set_wide.
 
 
 
