@@ -24,7 +24,15 @@ features     <- read.table("./features.txt")
 # using the values as column names of the dataset.
 
 features <- features[,2]   
+features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
+features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angleWithGravity_\\1_mean_mag" , features)
 features <- gsub("[)(,]","", features)
+features <- gsub("^t","time_", features)
+features <- gsub("^f","fft_", features)
+features <- gsub("Mag","_mag", features)
+features <- gsub("\\-","_", features)
+features <- gsub("_mag_(mean|meanFreq|std)","_\\1_mag", features)
+features <- gsub("angle([XYZ])gravityMean","angle_gravity_mean_\\1", features)
 
 # Adding column names to the above data.frames. This will ensure the
 # final table is understandable and ensures a smooth merge with the
@@ -74,6 +82,7 @@ data$activity  <- factor(data$activity, labels=act_labels[,2])
 # of columns we need to keep.
 
 columns <- grep("std|[Mm]ean", features) 
+co <- columns
 columns <- columns +2       
 columns <- c(1,2,columns)   
 
@@ -92,20 +101,22 @@ data <- data[,columns]
 # The function "summarise_each" is used to summarize over all columns
 # other than those grouped by.
 
-cat("\nNew tidy data.frame available: ***new_data_set_wide***. Dimensions = 180 x 55\n")
+nds  <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 
-new_data_set_wide     <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
+# For a proper tidy data.set we need a clear distinction between feature and measurement.
+# At the moment the many columns can refer to the observed value, reflecting different
+# aspects of that value. Let's gather, separate and spread to make more sense out of the
+# data.
+#
+
+tidyData <- gather(nds, temp_column, value, -subject, -activity) %>%
+	    separate(temp_column, into=c("type","feature","value_type","component")) %>%
+	    spread(feature, value)	
+
 
 # For plotting measurements of multiple features, it is sometimes convenient
 # to transform the wide table into a narrow one. This can be achieved by gathering
 # over the columns with measurements (so excluding subject and activity columns).
-
-cat("New tidy data.fram available: ***new_data_set_narrow***. Dimensions = 9540 x 4\n\n")
-
-new_data_set_narrow  <- gather(new_data_set_wide, feature, measurement, -subject, -activity)
-
-# Now removing objects no longer needed, this to not clutter R with all sort of
-# temporary data.
 
 rm(activity)
 rm(act_labels)

@@ -2,9 +2,6 @@
 Remco Niggebrugge  
 01/14/2015  
  
- 
-#Nochtans: activities do not have meaningful names!!!  
- 
 **This document is for me to keep track**, I do not think a RMarkdown file should be posted as part of this assignment.
 
 These are the steps I am going to take.
@@ -111,7 +108,7 @@ Let us start by creating a list of all features with name containing *'mean'*, *
 
 
 ```r
-columns <- grep("[[Mm]ean|std]", features[,2]) 
+columns <- grep("[Mm]ean|std", features[,2]) 
 columns <- columns +2       # accounting for the added activity and subject columns
 columns <- c(1,2,columns)   # that subsequently need to be added!!
 ```
@@ -121,22 +118,12 @@ Now we are ready to strip our dataset, only keeping those values we are interest
 
 ```r
 data <- data[,columns]
-```
-
-Dimensions should be 10299 by 55, check:
-
-```r
-dd <- dim(data)
-dd
+dim(data)
 ```
 
 ```
-## [1] 10299    55
+## [1] 10299    88
 ```
-
-So: 10299==10299   
-And:   55==55  
-
 
 **9** Group!
 

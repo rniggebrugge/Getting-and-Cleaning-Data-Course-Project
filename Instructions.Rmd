@@ -87,7 +87,7 @@ data$activity      <- factor(data$activity, labels=activity_labels[,2])
 Let us start by creating a list of all features with name containing *'mean'*, *'Mean'* or *'std'*:
 
 ```{r select-columns}
-columns <- grep("[[Mm]ean|std]", features[,2]) 
+columns <- grep("[Mm]ean|std", features[,2]) 
 columns <- columns +2       # accounting for the added activity and subject columns
 columns <- c(1,2,columns)   # that subsequently need to be added!!
 ```
@@ -96,17 +96,8 @@ Now we are ready to strip our dataset, only keeping those values we are interest
 
 ```{r strip-data-set}
 data <- data[,columns]
+dim(data)
 ```
-
-Dimensions should be 10299 by 55, check:
-```{r check-size}
-dd <- dim(data)
-dd
-```
-
-So: 10299==`r dd[1]`   
-And:   55==`r dd[2]`  
-
 
 **9** Group!
 
