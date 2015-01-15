@@ -130,7 +130,7 @@ tidy_data_set_wide  <- group_by(data, subject, activity) %>% summarise_each(funs
 cat("\nCreated narrow tidy dataset: ***tidy_data_set_narrow***.")
 
 split_columns <- c("type","feature","value_type","component") 
-if (TPE) split_columns <-  c("feature","value_type","component") 
+if (!TPE) split_columns <-  c("feature","value_type","component") 
 
 tidy_data_set_narrow <- tidy_data_set_wide %>%
 	    		gather(temp_column, value, -subject, -activity) %>%
