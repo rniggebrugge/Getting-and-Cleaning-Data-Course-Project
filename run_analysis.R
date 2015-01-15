@@ -85,7 +85,7 @@ columns <- c(1,2,columns)
 # With that we can reduce are "data" data.frame, only keeping 
 # the columns as described above.
 
-cat("\n New tidy data.frame available: ***data***. Dimensions 10299 x 55\n")
+cat("\nNew tidy data.frame available: ***data***. Dimensions 10299 x 55\n")
 
 data <- data[,columns]
 
