@@ -15,6 +15,8 @@ library(tidyr)		    # for "gather" function
 # - features     : list with titles of all measurements, used to create
 #                  meaningful column names
 
+cat("\n\nReading train dataset....please wait....\n")
+
 subject      <- read.table("./train/subject_train.txt")
 activity     <- read.table("./train/y_train.txt")
 measurements <- read.table("./train/X_train.txt", sep="")
@@ -42,6 +44,8 @@ names(measurements) <- features
 train_frame <- cbind(subject, activity, measurements)
 
 # Repeat the same steps for the tables in ./test/ directory
+
+cat("Reading test dataset....please wait....\n")
 
 subject             <- read.table("./test/subject_test.txt")
 activity            <- read.table("./test/y_test.txt")
@@ -91,26 +95,28 @@ data <- data[,columns]
 # The function "summarise_each" is used to summarize over all columns
 # other than those grouped by.
 
+cat("\nNew tidy data.frame available: ***new_data_set_wide***. Dimensions = 180 x 55\n")
+
 new_data_set_wide     <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 
 # For plotting measurements of multiple features, it is sometimes convenient
 # to transform the wide table into a narrow one. This can be achieved by gathering
 # over the columns with measurements (so excluding subject and activity columns).
 
+cat("New tidy data.fram available: ***new_data_set_narrow***. Dimensions = 9540 x 4\n\n")
+
 new_data_set_narrow  <- gather(new_data_set_wide, feature, measurement, -subject, -activity)
+
+cat("FINISHED PROCESSING.\n\n\n")
 
 # Some suggetions to inspect data visually:
 # library(lattice)
 # library(ggplot2)
-
 # with(new_data_set_wide, xyplot(tBodyAccmeanX ~  activity | subject ))
 # with(new_data_set_wide, xyplot(tBodyAccmeanX ~  subject | activity ))
 # with(new_data_set_narrow, xyplot(measurement ~ subject| activity, groups=feature))
 # qplot(measurement, feature,  data=new_data_set_narrow, facets = subject~activity)
-
-
 # str(new_data_set_wide)
 # summary(new_data_set_wide)
-
 # str(new_data_set_narrow)
 # summary(new_data_set_narrow)
