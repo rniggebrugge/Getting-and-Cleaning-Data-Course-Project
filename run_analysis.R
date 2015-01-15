@@ -24,7 +24,7 @@ features     <- read.table("./features.txt")
 # using the values as column names of the dataset.
 
 features <- features[,2]   
-features <- gsub("[)(,\\-]","", features)
+features <- gsub("[)(,]","", features)
 
 # Adding column names to the above data.frames. This will ensure the
 # final table is understandable and ensures a smooth merge with the
