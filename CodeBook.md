@@ -15,22 +15,22 @@ The tidy data set **tdn** has 55 columns, corresponding with 52 measured feature
 * fftBodyAccJerkXFreq : FFT of Frequency of Body Accelaration Jerk, X compomenent
 * fftBodyAccJerkY : FFT of Body Accelaratiok Jerk, Y component
 * fftBodyAccJerkYFreq : FFT of Frequency of Body Accelaration Jerk, Y compomenent
-* fftBodyAccJerkZ : FFT of Body Accelaratiok Jerk, X component
-   fftBodyAccJerkZFreq   
-   fftBodyAccTotal   
-   fftBodyAccTotalFreq   
-   fftBodyAccX   
-   fftBodyAccXFreq   
-   fftBodyAccY   
-   fftBodyAccYFreq   
-   fftBodyAccZ   
-   fftBodyAccZFreq   
-   fftBodyBodyAccJerkTotal   
-   fftBodyBodyAccJerkTotalFreq   
-   fftBodyBodyGyroJerkTotal   
-   fftBodyBodyGyroJerkTotalFreq   
-   fftBodyBodyGyroTotal   
-   fftBodyBodyGyroTotalFreq   
+* fftBodyAccJerkZ : FFT of Body Accelaratiok Jerk, Z component
+* fftBodyAccJerkZFreq : FFT of Frequency of Body Accelaration Jerk, Z compomenent
+* fftBodyAccTotal : FFT of Body Accelatation (total)
+* fftBodyAccTotalFreq: FFT of Body Accelaration Frequency (total)
+* fftBodyAccX: FFT of Body Accelaration, X component
+* fftBodyAccXFreq : FFT of Body Accelaration Frequency, X component
+* fftBodyAccY: FFT of Body Accelaration, Y component
+* fftBodyAccYFreq : FFT of Body Accelaration Frequency, Y component
+* fftBodyAccZ: FFT of Body Accelaration, Z component
+* fftBodyAccZFreq: FFT of Body Accelaration Frequency,  Z component
+* fftBodyBodyAccJerkTotal: FFT of Body Accelaration Jerk,  total
+* fftBodyBodyAccJerkTotalFreq: FFT of Body Accelaration Jerk Frequency,  total
+* fftBodyBodyGyroJerkTotal: FFT of Body Gyro Jerk,  total
+* fftBodyBodyGyroJerkTotalFreq: FFT of Body Gyro Jerk Frequency, total
+* fftBodyBodyGyroTotal: FFT of Body Gyro Jerk, total
+* fftBodyBodyGyroTotalFreq   
    fftBodyGyroX   
    fftBodyGyroXFreq   
    fftBodyGyroY   
