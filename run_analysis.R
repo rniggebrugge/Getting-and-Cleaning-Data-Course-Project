@@ -137,6 +137,9 @@ tdn<- tdw %>%
 				
 cat("\n\n\nFINISHED PROCESSING.\n\n\n")
 
+rm(activity); rm(act_labels); rm(columns);
+rm(features); rm(measurements); rm(subject);
+rm(test_frame); rm(train_frame);
 
 # with(new_data_set_wide, xyplot(tBodyAccmeanX ~  activity | subject ))
 # with(new_data_set_wide, xyplot(tBodyAccmeanX ~  subject | activity ))
