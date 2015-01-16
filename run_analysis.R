@@ -10,8 +10,6 @@ library(tidyr)    # for "gather" function
 # - features     : list with titles of all measurements, used to create
 #                  meaningful column names
 
-TPE <- FALSE
-
 cat("\n\nReading train dataset.....please wait....\n")
 
 subject      <- read.table("./train/subject_train.txt")
@@ -24,48 +22,24 @@ features     <- read.table("./features.txt")
 # ignored. The second column, with the names of the measurements,
 # contains many unwanted characters, these will be removed before
 # using the values as column names of the dataset.
+# A lot of processing needs to be done to whip them all in the same form.
+# Probably it can be achieved with more elegant, simple regular expressions
+# but since it only works on 561 or so values, it is not critical and
+# I do not have the time now to tidy up....
 
 features <- features[,2]   
-
-
-if(TPE){
 features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
-features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angleWithGravity_\\1_mean_mag" , features)
-# features <- gsub("^angle.*","drop_all", features)
-features <- gsub("[)(,]","", features)
-features <- gsub("^t","time_", features)
-features <- gsub("^f","fft_", features)
-features <- gsub("Mag","_mag", features)
-features <- gsub("\\-","_", features)
-features <- gsub("_mag_(mean|meanFreq|std)","_\\1_mag", features)
-features <- gsub("angle([XYZ])gravityMean","angle_gravity_mean_\\1", features)
-# } else {
-features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
-features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angle\\1|Gravity_mean_mag" , features)
+features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angleWithGravity\\1Total_mean" , features)
 features <- gsub("[)(,]","", features)
 features <- gsub("^t","time", features)
 features <- gsub("^f","fft", features)
 features <- gsub("Mag","_mag", features)
 features <- gsub("\\-","_", features)
-features <- gsub("_mag_meanFreq","Frequency_mag_mean", features)
-features <- gsub("_mag_(mean|std)","_\\1_mag", features)
-features <- gsub("angle([XYZ])gravityMean","angle\\1|_Gravity_mean_mag", features)
-}
-
-
-features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
-features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angleWithGravity_\\1Total_mean" , features)
-features <- gsub("[)(,]","", features)
-features <- gsub("^t","time_", features)
-features <- gsub("^f","fft_", features)
-features <- gsub("Mag","_mag", features)
-features <- gsub("\\-","_", features)
-features <- gsub("_mag_(mean|meanFreq|std)","Total+\\1", features)
+features <- gsub("_mag_(mean|std)","Total_\\1", features)
+features <- gsub("_(mean|std)_(.*)$","\\2_\\1", features)
 features <- gsub("angle([XYZ])gravityMean","angle_gravity\\1_mean", features)
-
-
-
-
+features <- gsub("_meanFreq_(X|Y|Z)$","\\1Freq_mean", features)
+features <- gsub("_meanFreq$","\\1Freq_mean", features)
 
 # Adding column names to the above data.frames. This will ensure the
 # final table is understandable and ensures a smooth merge with the
@@ -125,49 +99,42 @@ cat("\nNew tidy data.frame available: ***data***. \n")
 
 data <- data[,columns]
 
-# As a final step we will further reduce the data.frame by grouping
-# over subjects and activities. For each subject-activity combination
-# the mean value for each measurements is calculated. This will result
+# We can further reduce the data.frame by grouping over subjects 
+# and activities. For each subject-activity combination the mean value 
+# for each measurements is calculated. This will result
 # in 180 observations (6 activities * 30 subjects).
 #
 # The function "summarise_each" is used to summarize over all columns
 # other than those grouped by.
 
-cat("\nCreated wide tidy dataset: ***tidy_data_set_wide***.")
+cat("\nCreated wide tidy dataset: ***tdw***.")
 
-tidy_data_set_wide  <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
+tdw  <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 
-# For a proper tidy data.set we need a clear distinction between feature and measurement.
-# At the moment the many columns can refer to the observed value, reflecting different
-# aspects of that value. Let's gather, separate and spread to make more sense out of the
-# data.
+# As a final step the dataset can be narrowed done by taking out the 
+# _mean and_std parts from the columns names, and instead have this information
+# stored in a new column called "calculation_type". This will lead to a small portion
+# of NA values, because not for each feature the mean and std values are known.
 #
+# I have experimented also with further splitting the features, and created tables
+# with columns with:
+#   * _time_ and _fft_ values  (mathmatical processing type)
+#   * X / Y / Z / total values      (component of measurement
+#
+# The physics behind the experiment justify such a further splitting, as they do not
+# relate to new observed features, but calculations upon the measurement on the
+# features. However, because this resulted in tables with a very large number of
+# missing values NA (up to 50%), I decided against this.
 
-cat("\nCreated narrow tidy dataset: ***tidy_data_set_narrow***.")
 
-split_columns <- c("type","feature","value_type","component") 
-if (!TPE) split_columns <-  c("feature","value_type","component") 
-
-tidy_data_set_narrow <- tidy_data_set_wide %>%
+tdn<- tdw %>%
 	    		gather(temp_column, value, -subject, -activity) %>%
-	    		separate(temp_column, into=split_columns, sep="_") %>%
+	    		separate(temp_column, into=c("feature","calculation_type")  , sep="_") %>%
 	    		spread(feature, value)	
 
-
-# For plotting measurements of multiple features, it is sometimes convenient
-# to transform the wide table into a narrow one. This can be achieved by gathering
-# over the columns with measurements (so excluding subject and activity columns).
-
-if(FALSE){
-rm(activity)
-rm(act_labels)
-rm(columns)
-rm(features)
-rm(measurements)
-rm(subject)
-rm(test_frame)
-rm(train_frame)
-}
+				
+# End of processing!
+				
 cat("\n\n\nFINISHED PROCESSING.\n\n\n")
 
 
