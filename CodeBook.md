@@ -73,7 +73,7 @@ The tidy data set **tdn** has 55 columns, corresponding with 52 measured feature
 
 All data is derived from the provided research data. These data was normalized to have values [-1, 1] and as such do not have units.
 
-PROCESSING
+Processing
 ==========
 
 * For both the data in *train* and *test* folder the the Subject_<test/train>, X_<test/train> and y_<test/train> tables were read in R and cbinded to form one single dataset;
@@ -83,14 +83,16 @@ PROCESSING
 * Now the data are grouped over subjects and activities to generate mean values of all measured features over each activity-subject combination, these summarized data are stored in the **tdw** dataset;
 * In order to further tidy the data, the two columns present for almost each feature (<feature>_mean and <feature>_std) are gathered into one, with a new column **calculation_type**. Example:
       
-case   |  A_mean |  A_std            case | calculation_type |  A
----------------------------          ------------------------------
-case 1 |      45 |      8               1 |            mean  | 45
-case 2 |      10 |      2    ===>       1 |             std  |  8
-                                        2 |            mean  | 10
-                                        2 |             std  |  2
+case   |  A_mean |  A_std            case | calculation_type |  A  
+---------------------------          ------------------------------  
+case 1 |      45 |      8               1 |            mean  | 45  
+case 2 |      10 |      2    ===>       1 |             std  |  8  
+                                        2 |            mean  | 10  
+                                        2 |             std  |  2  
 
-* The such created dataset is stored as **
+* The such created dataset is stored as **tdn**
+* 
+
 
 
 
