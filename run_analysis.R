@@ -25,9 +25,10 @@ features     <- read.table("./features.txt")
 # contains many unwanted characters, these will be removed before
 # using the values as column names of the dataset.
 
+features <- features[,2]   
+
 
 if(TPE){
-features <- features[,2]   
 features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
 features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angleWithGravity_\\1_mean_mag" , features)
 # features <- gsub("^angle.*","drop_all", features)
@@ -38,8 +39,7 @@ features <- gsub("Mag","_mag", features)
 features <- gsub("\\-","_", features)
 features <- gsub("_mag_(mean|meanFreq|std)","_\\1_mag", features)
 features <- gsub("angle([XYZ])gravityMean","angle_gravity_mean_\\1", features)
-} else {
-features <- features[,2]
+# } else {
 features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
 features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angle\\1|Gravity_mean_mag" , features)
 features <- gsub("[)(,]","", features)
@@ -51,6 +51,22 @@ features <- gsub("_mag_meanFreq","Frequency_mag_mean", features)
 features <- gsub("_mag_(mean|std)","_\\1_mag", features)
 features <- gsub("angle([XYZ])gravityMean","angle\\1|_Gravity_mean_mag", features)
 }
+
+
+features <- gsub("angle\\(tBodyAccMean,gravity\\)","drop_this_column", features)
+features <- gsub("angle\\((.*),(.*)gravityMean\\)", "angleWithGravity_\\1Total_mean" , features)
+features <- gsub("[)(,]","", features)
+features <- gsub("^t","time_", features)
+features <- gsub("^f","fft_", features)
+features <- gsub("Mag","_mag", features)
+features <- gsub("\\-","_", features)
+features <- gsub("_mag_(mean|meanFreq|std)","Total+\\1", features)
+features <- gsub("angle([XYZ])gravityMean","angle_gravity\\1_mean", features)
+
+
+
+
+
 # Adding column names to the above data.frames. This will ensure the
 # final table is understandable and ensures a smooth merge with the
 # test-set data 
@@ -142,6 +158,7 @@ tidy_data_set_narrow <- tidy_data_set_wide %>%
 # to transform the wide table into a narrow one. This can be achieved by gathering
 # over the columns with measurements (so excluding subject and activity columns).
 
+if(FALSE){
 rm(activity)
 rm(act_labels)
 rm(columns)
@@ -150,7 +167,7 @@ rm(measurements)
 rm(subject)
 rm(test_frame)
 rm(train_frame)
-
+}
 cat("\n\n\nFINISHED PROCESSING.\n\n\n")
 
 
