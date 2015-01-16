@@ -87,8 +87,8 @@ case   |  A_mean |  A_std            case | calculation_type |  A
 ---------------------------          ------------------------------
 case 1 |      45 |      8               1 |            mean  | 45
 case 2 |      10 |      2    ===>       1 |             std  |  8
-                                        2 |            mean  | 10
-                                        2 |             std  |  2
+                                            2 |            mean  | 10
+                                            2 |             std  |  2
 
 </pre>
 * The such created dataset is stored as **tdn**
