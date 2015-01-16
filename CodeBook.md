@@ -82,7 +82,7 @@ Processing
 * Hence apart from merging available data and removing unneeded data, no processing is done at this point. No calculations or data-summaries have been carried out. The clean, tidy data set produces is called **data**;
 * Now the data are grouped over subjects and activities to generate mean values of all measured features over each activity-subject combination, these summarized data are stored in the **tdw** dataset;
 * In order to further tidy the data, the two columns present for almost each feature (<feature>_mean and <feature>_std) are gathered into one, with a new column **calculation_type**. Example:
-      
+<pre>      
 case   |  A_mean |  A_std            case | calculation_type |  A  
 ---------------------------          ------------------------------  
 case 1 |      45 |      8               1 |            mean  | 45  
@@ -90,8 +90,9 @@ case 2 |      10 |      2    ===>       1 |             std  |  8
                                         2 |            mean  | 10  
                                         2 |             std  |  2  
 
+</pre>
 * The such created dataset is stored as **tdn**
-* 
+
 
 
 
