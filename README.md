@@ -3,7 +3,7 @@
 #### Files to be evaluated
 
 * run_analysis.R : script processing raw data into a tidy dataset
-* CodeBook.????  : description of the variables in the tidy dataset
+* CodeBook.md    : description of the variables in the tidy dataset
 * README.md      : this file, explaining the run_analysis.R script 
  
 #### Prerequisites
@@ -39,8 +39,9 @@ First the above mentioned files are read and stored in the following objects:
 * measurements
 * features
  
-Secondly the **features** object is stripped from its first column, after which it only contains the list of features. Additionally the contents of this object are stripped from **)**, **)**, **-** and **,** characters. This to avoid problems
-with inappropriate column headers.
+Secondly the **features** object is stripped from its first column, after which it only contains the list of features. Additionally the contents of this object are stripped from **)**, **)**, **-** and **,** characters. This to avoid problems with inappropriate column headers. Also the labels of the long list of variables is processed
+to follow the identical structure for each: **<measuredFeature_calcultionType>**. Where measureFeature can be any
+of the observered measurable features, and calculationType either **mean** or **std**.
 
 As a third step the data.frames *subject*, *activity* and *measurements* are given meaningful column names.
 
@@ -67,15 +68,14 @@ From the **dplyr** library the **group_by** is used the make groups for each *su
 
 The results of the **group_by** operation is *piped* to the **dplyr::summarise_each** function. With this function we can make calculations for each column of the data.frame (except obviously those used for the grouping). The argument **mean** (function) is used as we need to calculate average values for each subject and each activity. 
 
-The resulting data.frame is stored in **new_data_set_wide**.  
+The resulting data.frame is stored in **tdw** (for Tidy Dataset Wide)  
 It contains mean measurements for 180 rows (30 subject * 6 activities = 180 groups), and 88 columns (86 measurements + activity + subject).
 
-As a final processing step this **new_data_set_wide** is transformed to a narrow table, by gathering over all the measurement columns. Using the **gather** function of **tidyr** this is achieved, the *subject* and *activity* columns are excluded from gathering and the mesaured features (column names in **new_data_set_wide**) are listed in column **feature** with the column **measurement** containing the actual values. 
+As a final processing step this **tdw** is transformed to a narrow table, by gathering over all the measurement columns. Using the **gather** function of **tidyr** this is achieved, the *subject* and *activity* columns are excluded from gathering and the mesaured features (column names in **tdw**) are listed in column **temp_column** with the column **value** containing the actual , measured values. 
 
-The resulting data.frame is stored in **new_data_set_narrow**.  
-It contains 15480 rows (86 measurements * 180 groups) and 4 columns (subject + activity + feature + measurment).
+Then using the function **dplyr::separate** the **temp_column** is split into two parts, **feature** and **calculation_type**. The first contains the measured features, the second has either value **mean** or **std**.
 
-The creation of **new_data_set_narrow** is not required, but I found it very useful to create plots with multiple lines. Example: *qplot(measurement, feature,  data=new_data_set_narrow, facets = .~activity)*
+As a final step the **feautre** column is spread out again. Now with the calcultation type taken out, the values of the column represent separate measured features and should appear as columns in the final, narrow dataset. The result is stored in **tdn** (for Tidy Dataset Narrow).
 
 In the final step of the script we remove the objects no longer needed, using **rm(....)**.
 
