@@ -95,8 +95,6 @@ columns <- c(1,2,columns)
 # With that we can reduce are "data" data.frame, only keeping 
 # the columns as described above.
 
-cat("\nNew tidy data.frame available: ***data***. \n")
-
 data <- data[,columns]
 
 # We can further reduce the data.frame by grouping over subjects 
@@ -106,8 +104,6 @@ data <- data[,columns]
 #
 # The function "summarise_each" is used to summarize over all columns
 # other than those grouped by.
-
-cat("\nCreated wide tidy dataset: ***tdw***.")
 
 tdw  <- group_by(data, subject, activity) %>% summarise_each(funs(mean))
 
@@ -135,7 +131,14 @@ tdn<- tdw %>%
 				
 # End of processing!
 				
-cat("\n\n\nFINISHED PROCESSING.\n\n\n")
+cat("\n\nFINISHED PROCESSING.\n\n")
+
+cat("Created dataframes: \n ")
+cat("\t data: full dataset\n")
+cat("\t tdw: dataset with variables averaged over subject and activity\n")
+cat("\t tdn: dataset with variables averaged as above, and _mean and _std moved into column\n\n")
+
+
 
 rm(activity); rm(act_labels); rm(columns);
 rm(features); rm(measurements); rm(subject);
