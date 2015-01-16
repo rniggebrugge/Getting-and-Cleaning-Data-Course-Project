@@ -134,9 +134,9 @@ tdn<- tdw %>%
 cat("\n\nFINISHED PROCESSING.\n\n")
 
 cat("Created dataframes: \n ")
-cat("\t data: full dataset\n")
-cat("\t tdw: dataset with variables averaged over subject and activity\n")
-cat("\t tdn: dataset with variables averaged as above, and _mean and _std moved into column\n\n")
+cat("    data: full dataset\n")
+cat("    tdw : dataset with variables averaged over subject and activity\n")
+cat("    tdn : dataset with variables averaged as above, and _mean and _std moved into column\n\n")
 
 
 
