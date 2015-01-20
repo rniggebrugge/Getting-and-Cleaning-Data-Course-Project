@@ -75,7 +75,7 @@ As a final processing step this **tdw** is transformed to a narrow table, by gat
 
 Then using the function **dplyr::separate** the **temp_column** is split into two parts, **feature** and **calculation_type**. The first contains the measured features, the second has either value **mean** or **std**.
 
-As a final step the **feautre** column is spread out again. Now with the calcultation type taken out, the values of the column represent separate measured features and should appear as columns in the final, narrow dataset. The result is stored in **tdn** (for Tidy Dataset Narrow).
+As a final step the **feature** column is spread out again. Now with the calcultation type taken out, the values of the column represent separate measured features and should appear as columns in the final, narrow dataset. The result is stored in **tdn** (for Tidy Dataset Narrow).
 
 In the final step of the script we remove the objects no longer needed, using **rm(....)**.
 
